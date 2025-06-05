@@ -10,9 +10,13 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '@prisma/client';
+import { IController } from 'src/utils/controller.interface';
 
 @Controller('user')
-export class UserController {
+export class UserController
+  implements IController<User, CreateUserDto, UpdateUserDto>
+{
   constructor(private readonly userService: UserService) {}
 
   @Post()
