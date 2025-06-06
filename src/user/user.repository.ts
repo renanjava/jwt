@@ -6,14 +6,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-//implements ICrudTemplate<User, CreateUserDto, UpdateUserDto>
-export class UserRepository {
+export class UserRepository
+  implements ICrudTemplate<User, CreateUserDto, UpdateUserDto>
+{
   constructor(private readonly prismaService: PrismaService) {}
   async findAll(): Promise<User[]> {
     return await this.prismaService.user.findMany();
   }
-  async findById(id: number): Promise<User | null> {
-    return await this.prismaService.user.findUnique({ where: { id } });
+  async findById(id: number): Promise<User> {
+    return await this.prismaService.user.findUniqueOrThrow({ where: { id } });
   }
   async create(createUserDto: CreateUserDto): Promise<User> {
     return await this.prismaService.user.create({ data: createUserDto });
