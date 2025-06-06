@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { CreateUserType } from '../types/create-user.type';
 
-export class CreateUserDto {
+export class CreateUserDto implements CreateUserType {
   @IsString()
   @IsNotEmpty()
   name: string;
