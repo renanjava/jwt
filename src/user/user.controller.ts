@@ -6,16 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
-import { IController } from 'src/utils/controller.interface';
+import { ICrudTemplate } from 'src/utils/crud-template.interface';
 
 @Controller('user')
 export class UserController
-  implements IController<User, CreateUserDto, UpdateUserDto>
+  implements ICrudTemplate<User, CreateUserDto, UpdateUserDto>
 {
   constructor(private readonly userService: UserService) {}
 
@@ -25,22 +26,25 @@ export class UserController
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.userService.findOne(id);
+  async findById(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.findById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);
   }
 }

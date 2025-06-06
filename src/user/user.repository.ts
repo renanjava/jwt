@@ -1,12 +1,13 @@
 import { User } from '@prisma/client';
-import { IRepository } from 'src/utils/repository.interface';
+import { ICrudTemplate } from 'src/utils/crud-template.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 
-export class UserRepository
-  implements IRepository<User, CreateUserDto, UpdateUserDto>
-{
+@Injectable()
+//implements ICrudTemplate<User, CreateUserDto, UpdateUserDto>
+export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
   async findAll(): Promise<User[]> {
     return await this.prismaService.user.findMany();
@@ -17,13 +18,13 @@ export class UserRepository
   async create(createUserDto: CreateUserDto): Promise<User> {
     return await this.prismaService.user.create({ data: createUserDto });
   }
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     return await this.prismaService.user.update({
       where: { id },
       data: updateUserDto,
     });
   }
-  async remove(id: number): Promise<User | null> {
+  async remove(id: number): Promise<User> {
     return await this.prismaService.user.delete({ where: { id } });
   }
 }
