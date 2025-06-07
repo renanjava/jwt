@@ -1,8 +1,8 @@
 import { User } from '@prisma/client';
-import { ICrudTemplate } from 'src/utils/crud-template.interface';
+import { ICrudTemplate } from '../utils/crud-template.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
