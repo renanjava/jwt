@@ -29,4 +29,8 @@ export class UserService
   async remove(id: number) {
     return await this.userRepository.remove(id);
   }
+
+  async findByEmail(email: string): Promise<User> {
+    return await this.userRepository.findByEmail(email);
+  }
 }
