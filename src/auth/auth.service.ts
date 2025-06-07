@@ -12,7 +12,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
-  async login(loginUserDto: LoginUserDto): Promise<string> {
+  async login(loginUserDto: LoginUserDto): Promise<Record<string, any>> {
     const userFounded = await this.userService.findByEmail(loginUserDto.email);
 
     const isValidPassword = await bcrypt.compare(
@@ -23,9 +23,8 @@ export class AuthService {
     if (!isValidPassword) {
       throw new UnauthorizedException('Senha inválida');
     }
-
-    return 'testando uns negocio ai';
-    //return this.jwtService.sign(userFounded);
+    const payload = { sub: userFounded.id, username: userFounded.name };
+    return { access_token: this.jwtService.sign(payload) };
   }
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {

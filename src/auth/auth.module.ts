@@ -3,13 +3,20 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
-  imports: [UserModule, PassportModule],
+  imports: [
+    UserModule,
+    PassportModule,
+    JwtModule.register({
+      secret: 'testando uns negocio ai',
+      signOptions: { expiresIn: '60s' },
+    }),
+  ],
   controllers: [AuthController],
-  providers: [JwtStrategy, LocalStrategy, AuthService, JwtService],
+  providers: [JwtStrategy, LocalStrategy, AuthService],
 })
 export class AuthModule {}
