@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -10,22 +10,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '@prisma/client';
-import { ICrudTemplate } from 'src/utils/crud-template.interface';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CrudTemplateWithoutCreate } from '../utils/types/crud-template-without-create.type';
 
 @Controller('user')
-export class UserController
-  implements ICrudTemplate<User, CreateUserDto, UpdateUserDto>
-{
+export class UserController implements CrudTemplateWithoutCreate {
   constructor(private readonly userService: UserService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
 
   @Get()
   @UseGuards(JwtAuthGuard)

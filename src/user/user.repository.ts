@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { User } from '@prisma/client';
-import { ICrudTemplate } from '../utils/crud-template.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { CrudTemplate } from '../utils/types/crud-template.type';
 
 @Injectable()
-export class UserRepository
-  implements ICrudTemplate<User, CreateUserDto, UpdateUserDto>
-{
+export class UserRepository implements CrudTemplate {
   constructor(private readonly prismaService: PrismaService) {}
   async findAll(): Promise<User[]> {
     return await this.prismaService.user.findMany();

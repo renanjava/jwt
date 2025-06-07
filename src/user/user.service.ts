@@ -1,14 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
-import { ICrudTemplate } from 'src/utils/crud-template.interface';
 import { User } from '@prisma/client';
+import { CrudTemplate } from '../utils/types/crud-template.type';
 
 @Injectable()
-export class UserService
-  implements ICrudTemplate<User, CreateUserDto, UpdateUserDto>
-{
+export class UserService implements CrudTemplate {
   constructor(private readonly userRepository: UserRepository) {}
   async create(createUserDto: CreateUserDto) {
     return await this.userRepository.create(createUserDto);
