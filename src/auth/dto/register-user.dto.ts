@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { RegisterUserType } from '../types/register-user.type';
 import { Role } from '@prisma/client';
