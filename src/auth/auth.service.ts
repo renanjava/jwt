@@ -26,7 +26,11 @@ export class AuthService {
     if (!isValidPassword) {
       throw new UnauthorizedException('Senha inválida');
     }
-    const payload = { sub: userFounded.id, username: userFounded.name };
+    const payload = {
+      sub: userFounded.id,
+      username: userFounded.name,
+      role: userFounded.role,
+    };
     return { access_token: this.jwtService.sign(payload) };
   }
 

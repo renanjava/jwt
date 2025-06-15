@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { CreateUserType } from '../types/create-user.type';
+import { Role } from '@prisma/client';
 
 export class CreateUserDto implements CreateUserType {
   @IsString()
@@ -13,4 +14,8 @@ export class CreateUserDto implements CreateUserType {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @IsEnum(Role, { each: true })
+  @IsNotEmpty()
+  role: Role;
 }
