@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
