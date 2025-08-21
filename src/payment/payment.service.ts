@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import AbacatePay from 'abacatepay-nodejs-sdk';
 import { PaymentRepository } from './payment.repository';
 import {
@@ -7,6 +12,7 @@ import {
 } from 'abacatepay-nodejs-sdk/dist/types';
 import { CreateBillingDto } from './dto/create-billing.dto';
 import { UserRepository } from 'src/user/user.repository';
+import { cpf } from 'cpf-cnpj-validator';
 
 @Injectable()
 export class PaymentService {
@@ -24,59 +30,44 @@ export class PaymentService {
       throw new NotFoundException('usuário nao encontrado');
     }
 
+    if (!cpf.isValid(user.cpf)) {
+      throw new BadRequestException(
+        'cpf inválido para continuar o processamento',
+      );
+    }
+
     const customer: CreateCustomerData = {
       email: user.email,
       name: user.name,
-      cellphone: '12345',
-      taxId: String(user.id),
+      cellphone: user.phone,
+      taxId: user.cpf,
     };
+
+    console.log(customer);
 
     const billing: CreateBillingData = {
       frequency: 'ONE_TIME',
       methods: ['PIX'],
-      products: [
-        {
-          externalId: '123',
-          name: 'reserva chacara teste',
-          quantity: 1,
-          price: 4500,
-        },
-      ],
+      products: [createBillingDto.product],
       returnUrl: 'https://yoursite.com/app',
       completionUrl: 'https://yoursite.com/payment/success',
-      customer: {
-        email: user.email,
-        name: user.name,
-        cellphone: '12345',
-        taxId: String(user.id),
-      },
+      customer,
     };
 
     console.log({ customer });
     console.log({ billing });
 
-    const response = await this.paymentProvider.billing.create({
-      frequency: 'ONE_TIME',
-      methods: ['PIX'],
-      products: [
-        {
-          externalId: 'PRO-PLAN',
-          name: 'Pro plan',
-          quantity: 1,
-          price: 1000, // Amount in cents
-        },
-      ],
-      returnUrl: 'https://yoursite.com/app',
-      completionUrl: 'https://yoursite.com/payment/success',
-      customer: {
-        name: 'Customer Name',
-        email: 'customer@example.com',
-        cellphone: '+5511999999999',
-        taxId: '09240529020',
-      },
-    });
+    const response = await this.paymentProvider.billing.create(billing);
 
     console.log(response);
+
+    if (!response.data) {
+      throw new BadRequestException('Input inválido');
+    }
+
+    if (response.error === null) {
+      console.log('Pagamento criado com sucesso!');
+    }
 
     return response;
   }

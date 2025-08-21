@@ -17,8 +17,10 @@ model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
+  cpf       String   @unique
+  phone     String   @unique
   password  String
-  role     Role
+  role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
