@@ -67,8 +67,6 @@ export class PaymentService {
       taxId: user.cpf,
     };
 
-    console.log(customer);
-
     const billing: CreateBillingData = {
       frequency: 'ONE_TIME',
       methods: ['PIX'],
@@ -78,20 +76,13 @@ export class PaymentService {
       customer,
     };
 
-    console.log({ customer });
-    console.log({ billing });
-
     const response = await this.paymentProvider.billing.create(billing);
-
-    console.log(response);
 
     if (!response.data) {
       throw new BadRequestException('Input inválido');
     }
 
     if (response.error === null) {
-      console.log('Pagamento criado com sucesso!');
-
       const paymentPayload: CreatePaymentDto = {
         external_id: response.data.id,
         amount: response.data.amount,
@@ -112,10 +103,7 @@ export class PaymentService {
   }
 
   async findAllBills() {
-    const response = await this.paymentProvider.billing.list();
-    console.log(response);
-
-    return response;
+    return await this.paymentProvider.billing.list();
   }
 
   async findByExternalId(externalId: string) {
