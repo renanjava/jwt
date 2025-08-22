@@ -24,4 +24,14 @@ export class PaymentController {
   async findAllBills() {
     return await this.paymentService.findAllBills();
   }
+
+  @Get(':external_id')
+  async findByExternalId(@Param('external_id') externalId: string) {
+    return await this.paymentService.findByExternalId(externalId);
+  }
+
+  @Post('web-hook')
+  async webHookCallBack(@Body() payload: any) {
+    return await this.paymentService.handleWebHook(payload);
+  }
 }

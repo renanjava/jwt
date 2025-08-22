@@ -14,6 +14,8 @@ import { UserRepository } from 'src/user/user.repository';
 import { cpf } from 'cpf-cnpj-validator';
 import { ProductRepository } from 'src/product/product.repository';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { PaymentStatus } from '@prisma/client';
 
 @Injectable()
 export class PaymentService {
@@ -44,11 +46,18 @@ export class PaymentService {
       throw new NotFoundException('produto nao encontrado');
     }
 
-    const productInput = {
+    const realProductInput = {
       externalId: product.id,
       name: product.name,
       price: product.price,
       quantity: product.quantity,
+    };
+
+    const feeProductInput = {
+      externalId: 'taxa-pagamento',
+      name: 'taxa de pagamento',
+      price: 100,
+      quantity: 1,
     };
 
     const customer: CreateCustomerData = {
@@ -63,7 +72,7 @@ export class PaymentService {
     const billing: CreateBillingData = {
       frequency: 'ONE_TIME',
       methods: ['PIX'],
-      products: [productInput],
+      products: [feeProductInput, realProductInput],
       returnUrl: 'https://yoursite.com/app',
       completionUrl: 'https://yoursite.com/payment/success',
       customer,
@@ -84,6 +93,8 @@ export class PaymentService {
       console.log('Pagamento criado com sucesso!');
 
       const paymentPayload: CreatePaymentDto = {
+        external_id: response.data.id,
+        amount: response.data.amount,
         method: response.data.methods[0],
         dev_mode: response.data.devMode,
         payment_fee: response.data.metadata.fee,
@@ -105,5 +116,31 @@ export class PaymentService {
     console.log(response);
 
     return response;
+  }
+
+  async findByExternalId(externalId: string) {
+    const payment = await this.paymentRepository.findByExternalId(externalId);
+    if (!payment) {
+      throw new NotFoundException('pagamento não encontrado');
+    }
+
+    return payment;
+  }
+
+  async handleWebHook(payload: any) {
+    const event = payload.event;
+
+    if (event === 'billing.paid') {
+      const externalId = payload.data.billing.id;
+      const updatePaymentDto: UpdatePaymentDto = {
+        paid_date: new Date(),
+        paid_amount: payload.data.billing.paidAmount,
+        status: PaymentStatus.PAID,
+      };
+
+      return await this.paymentRepository.update(externalId, updatePaymentDto);
+    }
+
+    return { message: 'evento não mapeado' };
   }
 }

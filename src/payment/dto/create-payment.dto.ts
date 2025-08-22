@@ -1,6 +1,8 @@
 import { $Enums } from '@prisma/client';
 
 export class CreatePaymentDto {
+  external_id: string;
+  amount: number;
   status: $Enums.PaymentStatus;
   payment_url: string;
   payment_fee: number;

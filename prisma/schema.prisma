@@ -35,9 +35,12 @@ model Product {
 
 model Payment {
   id          String        @id @default(uuid())
+  external_id String        @unique
   status      PaymentStatus
   payment_url String
   paid_amount Int?
+  paid_date   DateTime?
+  amount      Int
   payment_fee Int
   return_url  String
   success_url String
