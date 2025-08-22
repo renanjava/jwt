@@ -25,7 +25,37 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Product {
+  id       String    @id @default(uuid())
+  name     String
+  quantity Int
+  price    Int
+  Payment  Payment[]
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  status      PaymentStatus
+  payment_url String
+  paid_amount Int?
+  payment_fee Int
+  return_url  String
+  success_url String
+  method      String        @default("PIX")
+  dev_mode    Boolean
+  product_id  String
+  product     Product       @relation(fields: [product_id], references: [id])
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  EXPIRED
+  CANCELLED
+  REFUNDED
 }
